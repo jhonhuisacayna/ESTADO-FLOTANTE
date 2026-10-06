@@ -1,0 +1,167 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #120417;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.corazon-fondo {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  font-size: 60vh;
+  color: rgba(255, 105, 180, 0.15);
+  transform: translate(-50%, -50%);
+  animation: latido 2s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes latido {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.1; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.2; }
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+  max-width: 450px;
+  width: 85%;
+  text-align: center;
+  color: #fff;
+  z-index: 50;
+  transition: opacity 0.5s ease;
+}
+
+.card h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      color: #ffd29d;
+      text-transform: uppercase;
+    }
+
+    .card p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 25px;
+      color: #ffeef2;
+    }
+
+    .btn-yes, .btn-no {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+button {
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-family: 'Luckiest Guy', cursive;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.3s;
+  position: relative;
+  z-index: 60;
+}
+
+.btn-yes {
+  background-color: #ff007f;
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.6);
+}
+
+.btn-yes:active {
+  transform: scale(0.9);
+  background-color: #ff479d;
+}
+
+.btn-no {
+  background-color: #3b214f;
+  color: #ccc;
+}
+
+.btn-no:active {
+  transform: scale(0.9);
+}
+
+.heart-click {
+  position: absolute;
+  font-size: 28px;
+  pointer-events: none;
+  animation: boom 0.8s ease-out forwards;
+  z-index: 100;
+}
+
+@keyframes boom {
+  0% { transform: scale(0); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.light {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px 4px #ffdd67;
+  animation: blink 2s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.1; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+
+.flower {
+  position: absolute;
+  font-size: 24px;
+  pointer-events: none;
+  animation: float 8s linear forwards;
+  bottom: -50px;
+  z-index: 2;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.9; }
+  100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+}
+
+.hidden {
+  display: none !important;
+}

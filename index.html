@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Un Pequeño Detalle</title>
+
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      -webkit-touch-callout: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      /* Fondo Atardecer */
+      background: linear-gradient(180deg, #2c0833 0%, #681944 35%, #a83648 65%, #d16b47 85%, #f19f5d 100%);
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .atardecer-sol {
+      position: absolute;
+      bottom: 12%;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(255,220,150,0.8) 0%, rgba(255,160,80,0.3) 50%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(8px);
+    }
+
+    /* TARJETA INICIAL (Temática Música) */
+    .card {
+      background: rgba(30, 10, 30, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 2.2rem;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      max-width: 420px;
+      width: 88%;
+      text-align: center;
+      color: #fff;
+      z-index: 50;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .card h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      color: #ffd29d;
+      text-transform: uppercase;
+    }
+
+    .card p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 25px;
+      color: #ffeef2;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 0.85rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      z-index: 100;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .btn-yes {
+      background: linear-gradient(135deg, #ff477e, #ff758c);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 71, 126, 0.5);
+    }
+
+    .btn-yes:active { transform: scale(0.92); }
+
+    .btn-no {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #ffeef2;
+    }
+
+    .btn-no:active { transform: scale(0.92); }
+
+    /* REPRODUCTOR DE MÚSICA */
+    .player-card {
+      background: rgba(18, 25, 20, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px;
+      padding: 22px;
+      width: 340px;
+      max-width: 90%;
+      color: #fff;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .player-card.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .player-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: #b3c3b9;
+      font-weight: 600;
+    }
+
+    .player-header .icon-btn {
+      background: none;
+      border: none;
+      color: #b3c3b9;
+      font-size: 1.2rem;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .album-cover {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 18px;
+      object-fit: cover;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .song-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2px;
+    }
+
+    .song-details h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+
+    .song-details p {
+      font-size: 0.9rem;
+      color: #a3c2b0;
+    }
+
+    .song-icon {
+      font-size: 1.3rem;
+      color: #25d366;
+    }
+
+    .progress-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: #25d366;
+      border-radius: 10px;
+      transition: width 0.1s linear;
+    }
+
+    .time-stamps {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #92b09e;
+    }
+
+    .player-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .control-btn {
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .play-pause-btn {
+      width: 48px;
+      height: 48px;
+      background: #25d366;
+      color: #0d1a12;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    }
+
+    .volume-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+      padding: 0 5px;
+    }
+
+    .volume-icon {
+      font-size: 0.9rem;
+      color: #a3c2b0;
+    }
+
+    .volume-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.2);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #25d366;
+      cursor: pointer;
+    }
+
+    /* CONTENEDOR DEL VIDEO FINAL */
+    .video-card {
+      background: rgba(18, 25, 20, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px;
+      padding: 18px;
+      width: 360px;
+      max-width: 92%;
+      color: #fff;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+      z-index: 70;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .video-card.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .video-card h2 {
+      font-size: 1.1rem;
+      text-align: center;
+      color: #ffd29d;
+      font-weight: 700;
+    }
+
+    .video-wrapper {
+      width: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      background: #000;
+    }
+
+    .video-wrapper video {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 60vh;
+    }
+
+    /* Animaciones de fondo */
+    .heart-click {
+      position: absolute;
+      font-size: 28px;
+      pointer-events: none;
+      animation: boom 0.8s ease-out forwards;
+      z-index: 200;
+    }
+
+    @keyframes boom {
+      0% { transform: scale(0); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 1; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    .light {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 12px 4px #ffdd67;
+      animation: blink 2s infinite ease-in-out;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.15; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.4); }
+    }
+
+    .flower {
+      position: absolute;
+      font-size: 24px;
+      pointer-events: none;
+      animation: float 8s linear forwards;
+      bottom: -50px;
+      z-index: 2;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      20% { opacity: 0.9; }
+      100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Audio de fondo -->
+  <audio id="bg-music"></audio>
+
+  <div class="atardecer-sol"></div>
+
+  <!-- 1. Tarjeta inicial -->
+  <div class="card" id="card">
+    <h1>HOLA, LEE LAS CARTITAS 🎧</h1>
+    <p>SERA TROSTE ¿GOO?</p>
+    
+    <div class="buttons">
+      <button type="button" class="btn-yes" id="btn-si">PLAY</button>
+      <button type="button" class="btn-no" id="btn-no">¿COMO QUE NO?</button>
+    </div>
+  </div>
+
+  <!-- 2. Reproductor estilo Spotify -->
+  <div class="player-card hidden" id="player-card">
+    <div class="player-header">
+      <button class="icon-btn">⌵</button>
+      <span>Reproduciendo ahora</span>
+      <button class="icon-btn">⋮</button>
+    </div>
+
+    <img src="" alt="Portada" class="album-cover" id="album-cover" onerror="this.src='https://picsum.photos/400/400?romantic'">
+
+    <div class="song-info">
+      <div class="song-details">
+        <h2 id="song-title">Cargando...</h2>
+        <p id="song-artist">Para Ti ❤️</p>
+      </div>
+      <div class="song-icon">🎵</div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar-bg" id="progress-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="time-stamps">
+        <span id="current-time">00:00</span>
+        <span id="total-duration">00:00</span>
+      </div>
+    </div>
+
+    <div class="player-controls">
+      <button class="control-btn" id="prev-btn">⏮</button>
+      <button class="control-btn play-pause-btn" id="play-btn">❚❚</button>
+      <button class="control-btn" id="next-btn">⏭</button>
+    </div>
+
+    <div class="volume-container">
+      <span class="volume-icon">📁</span>
+      <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.01" value="0.8">
+      <span class="volume-icon">🔊</span>
+    </div>
+  </div>
+
+  <!-- 3. Tarjeta de Video Final -->
+  <div class="video-card hidden" id="video-card">
+    <h2>✨ Un último detalle para ti... ✨</h2>
+    <div class="video-wrapper">
+      <video id="final-video" controls playsinline>
+        <source src="video.mp4" type="video/mp4">
+        Tu navegador no soporta reproducción de video.
+      </video>
+    </div>
+  </div>
+
+  <script>
+    // -----------------------------------------------------------
+    // 🎵 LISTA DE 3 CANCIONES
+    // -----------------------------------------------------------
+    const playlist = [
+      {
+        title: "GOLDI",
+        artist: "JC",
+        src: "cancion.mp3",
+        cover: "portada.jpg"
+      },
+      {
+        title: "ESPECIAL",
+        artist: "JC",
+        src: "cancion2.mp3",
+        cover: "portada2.jpg"
+      },
+      {
+        title: "TONG PO",
+        artist: "JC",
+        src: "cancion3.mp3",
+        cover: "portada3.jpg"
+      }
+    ];
+
+    let currentSongIndex = 0;
+
+    window.onload = function() {
+      const btnSi = document.getElementById('btn-si');
+      const btnNo = document.getElementById('btn-no');
+      const music = document.getElementById('bg-music');
+      const playBtn = document.getElementById('play-btn');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const volumeSlider = document.getElementById('volume-slider');
+      const finalVideo = document.getElementById('final-video');
+
+      loadSong(currentSongIndex);
+
+      btnSi.addEventListener('click', function() {
+        const card = document.getElementById('card');
+        card.style.opacity = '0';
+        setTimeout(function() {
+          card.classList.add('hidden');
+          const player = document.getElementById('player-card');
+          player.classList.remove('hidden');
+          setTimeout(function() { player.classList.add('active'); }, 50);
+        }, 400);
+
+        music.play().then(() => {
+          playBtn.innerText = '❚❚';
+        }).catch(err => {
+          console.log("Error al reproducir:", err);
+          playBtn.innerText = '▶';
+        });
+
+        createLights(35);
+        createFlowers();
+      });
+
+      btnNo.addEventListener('click', function() {
+        alert("¡Tómate tu tiempo para leerlo con calma! 😊");
+      });
+
+      playBtn.addEventListener('click', function() {
+        if (music.paused) {
+          music.play();
+          playBtn.innerText = '❚❚';
+        } else {
+          music.pause();
+          playBtn.innerText = '▶';
+        }
+      });
+
+      // Botón Siguiente
+      nextBtn.addEventListener('click', function() {
+        if (currentSongIndex < playlist.length - 1) {
+          currentSongIndex++;
+          loadSong(currentSongIndex);
+          music.play();
+          playBtn.innerText = '❚❚';
+        } else {
+          showVideo();
+        }
+      });
+
+      // Botón Anterior
+      prevBtn.addEventListener('click', function() {
+        if (currentSongIndex > 0) {
+          currentSongIndex--;
+          loadSong(currentSongIndex);
+          music.play();
+          playBtn.innerText = '❚❚';
+        }
+      });
+
+      // 🔁 AUTOMÁTICO: Al terminar cada canción
+      music.addEventListener('ended', function() {
+        if (currentSongIndex < playlist.length - 1) {
+          currentSongIndex++;
+          loadSong(currentSongIndex);
+          music.play();
+        } else {
+          // Si termina la 3ra canción, muestra el video automáticamente
+          showVideo();
+        }
+      });
+
+      // 🔄 RECARGAR PÁGINA AL TERMINAR EL VIDEO
+      if (finalVideo) {
+        finalVideo.addEventListener('ended', function() {
+          const videoCard = document.getElementById('video-card');
+          if (videoCard) {
+            videoCard.style.transition = 'opacity 1s ease';
+            videoCard.style.opacity = '0';
+          }
+          setTimeout(function() {
+            location.reload();
+          }, 1000);
+        });
+      }
+
+      // Control de volumen
+      volumeSlider.addEventListener('input', function(e) {
+        music.volume = e.target.value;
+      });
+
+      // Actualizar tiempo
+      music.addEventListener('timeupdate', function() {
+        if (music.duration) {
+          const pct = (music.currentTime / music.duration) * 100;
+          document.getElementById('progress-fill').style.width = pct + '%';
+          document.getElementById('current-time').innerText = formatTime(music.currentTime);
+          document.getElementById('total-duration').innerText = formatTime(music.duration);
+        }
+      });
+
+      function loadSong(index) {
+        const song = playlist[index];
+        music.src = song.src;
+        document.getElementById('song-title').innerText = song.title;
+        document.getElementById('song-artist').innerText = song.artist;
+        document.getElementById('album-cover').src = song.cover;
+      }
+
+      function showVideo() {
+        music.pause();
+        const player = document.getElementById('player-card');
+        player.classList.remove('active');
+        player.style.opacity = '0';
+
+        setTimeout(() => {
+          player.classList.add('hidden');
+          const videoCard = document.getElementById('video-card');
+          videoCard.classList.remove('hidden');
+          setTimeout(() => {
+            videoCard.classList.add('active');
+            finalVideo.play().catch(err => console.log("Video autoplay bloqueado:", err));
+          }, 50);
+        }, 500);
+      }
+
+      function formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return m + ':' + (s < 10 ? '0' : '') + s;
+      }
+    };
+
+    // Corazones flotantes al hacer clic
+    document.body.addEventListener("click", function(e) {
+      if (e.target.tagName === 'BUTTON' || e.target.closest('.player-card') || e.target.closest('.video-card')) return;
+
+      const h = document.createElement("div");
+      h.className = "heart-click";
+      h.innerText = "❤️";
+      h.style.left = (e.clientX - 15) + "px";
+      h.style.top = (e.clientY - 15) + "px";
+      document.body.appendChild(h);
+      setTimeout(function() { h.remove(); }, 800);
+    });
+
+    function createLights(amount) {
+      for (let i = 0; i < amount; i++) {
+        const light = document.createElement('div');
+        light.className = 'light';
+        light.style.top = Math.random() * 100 + 'vh';
+        light.style.left = Math.random() * 100 + 'vw';
+        light.style.animationDelay = Math.random() * 3 + 's';
+        light.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+        document.body.appendChild(light);
+      }
+    }
+
+    function createFlowers() {
+      const flowerIcons = ['🌸', '🌺', '🌼', '🌷', '✨'];
+      setInterval(function() {
+        const flower = document.createElement('div');
+        flower.className = 'flower';
+        flower.innerText = flowerIcons[Math.floor(Math.random() * flowerIcons.length)];
+        flower.style.left = Math.random() * 100 + 'vw';
+        flower.style.animationDuration = (5 + Math.random() * 4) + 's';
+        flower.style.fontSize = (20 + Math.random() * 20) + 'px';
+        document.body.appendChild(flower);
+
+        setTimeout(function() { flower.remove(); }, 9000);
+      }, 350);
+    }
+  </script>
+</body>
+</html>
